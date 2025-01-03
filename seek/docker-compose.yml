@@ -1,0 +1,24 @@
+services:
+  web:
+    build: .
+    container_name: web
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - MONGO_URI=mongodb://db:27017/
+      - MONGO_DB=books_db
+    depends_on:
+      - db
+
+  db:
+    image: mongo:5.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
