@@ -102,7 +102,17 @@ curl --location --request GET 'http://localhost:8000/api/books/' \
 En Postman, puedes agregar el token en la sección de encabezados de la solicitud.
 Authorization: Token <tu-token>
 ```
+## UNIT TEST
 
+### Ejecuta el script de unit test
+
+```bash
+Usando docker
+docker exec web python manage.py test
+
+Usando python
+python manage.py test
+```
 
 ## Endpoints Disponibles
 
