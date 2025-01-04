@@ -15,36 +15,39 @@ class BookView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Filtrar libros por los query_params
-        filters = {}
-        for param in ['title', 'author', 'published_date', 'genre', 'price']:
-            value = request.query_params.get(param)
-            if value:
-                # Utilizamos regex para buscar en la cadena de texto sin importar mayúsculas
-                filters[param] = {"$regex": value, "$options": "i"}
+        try:
+            # Filtrar libros por los query_params
+            filters = {}
+            for param in ['title', 'author', 'published_date', 'genre', 'price']:
+                value = request.query_params.get(param)
+                if value:
+                    # Utilizamos regex para buscar en la cadena de texto sin importar mayúsculas
+                    filters[param] = {"$regex": value, "$options": "i"}
 
-        books = list(books_collection.find(filters, {"_id": False}))
+            books = list(books_collection.find(filters, {"_id": 0}))
 
-        if not books:
-            return Response({"message": "No books found"}, status=status.HTTP_404_NOT_FOUND)
+            if not books:
+                return Response({"message": "No books found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Paginación, tomamos los valores de page y page_size de los query_params o usamos valores por defecto
-        page = int(request.query_params.get('page', 1))
-        page_size = int(request.query_params.get('page_size', 10))
+            # Paginación, tomamos los valores de page y page_size de los query_params o usamos valores por defecto
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 10))
 
-        start = (page - 1) * page_size
-        end = start + page_size
+            start = (page - 1) * page_size
+            end = start + page_size
 
-        paginated_books = books[start:end]
+            paginated_books = books[start:end]
 
-        return Response({
-            "total_books": len(books),
-            "page": page,
-            "page_size": page_size,
-            "total_pages": (len(books) + page_size - 1) // page_size,
-            "books": paginated_books,
-        }, status=status.HTTP_200_OK)
+            return Response({
+                "total_books": len(books),
+                "page": page,
+                "page_size": page_size,
+                "total_pages": (len(books) + page_size - 1) // page_size,
+                "books": paginated_books,
+            }, status=status.HTTP_200_OK)
 
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try:
