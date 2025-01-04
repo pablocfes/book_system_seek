@@ -111,14 +111,17 @@ Authorization: Token <tu-token>
 ### Ejecuta el script de unit test
 
 ```bash
-Usando docker
+# Usando docker
 docker exec web python manage.py test
 
-Usando python
+# Usando python
 python manage.py test
 ```
 
-## Endpoints Disponibles
+## Visualización Swagger de los Endpoints
+
+Para visualizar la API en Swagger, visita `http://localhost:8000/`.
+
 
 ### CRUD de Libros
 
