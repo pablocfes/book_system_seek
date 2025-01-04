@@ -1,5 +1,2 @@
 venv
-#ignore pycache
-
-__pycache__/
 
