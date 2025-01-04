@@ -18,3 +18,8 @@ initial_data = [
 ]
 
 books_collection.insert_many(initial_data)
+
+for book in initial_data:
+    existing_book = books_collection.find_one({"title": book["title"]})
+    if not existing_book:
+        books_collection.insert_one(book)

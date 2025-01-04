@@ -11,7 +11,6 @@ services:
       - MONGO_DB=books_db
     depends_on:
       - db
-    user: "${UID}:${GID}"  # Añadir esta línea
 
   db:
     image: mongo:5.0

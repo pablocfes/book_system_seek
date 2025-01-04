@@ -3,24 +3,47 @@ from rest_framework.response import Response
 from rest_framework import status
 from books.models import books_collection
 from books.api.serializers import BookSerializer
-from bson.objectid import ObjectId
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 class BookView(APIView):
 
-    def get(self, request):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
         # Filtrar libros por los query_params
         filters = {}
-        for param in ['title', 'author', 'published_date', 'price']:
+        for param in ['title', 'author', 'published_date', 'genre', 'price']:
             value = request.query_params.get(param)
             if value:
-                # Ignorar mayúsculas y minúsculas y realizar una busqueda de coincidencias
                 filters[param] = {"$regex": value, "$options": "i"}
 
         books = list(books_collection.find(filters, {"_id": False}))
+
         if not books:
             return Response({"message": "No books found"}, status=status.HTTP_404_NOT_FOUND)
-        return Response(books, status=status.HTTP_200_OK)
+
+        # Paginación
+        page = int(request.query_params.get('page', 1))
+        page_size = int(request.query_params.get('page_size', 10))
+
+        start = (page - 1) * page_size
+        end = start + page_size
+
+        paginated_books = books[start:end]
+
+        return Response({
+            "total_books": len(books),
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (len(books) + page_size - 1) // page_size,
+            "books": paginated_books,
+        }, status=status.HTTP_200_OK)
+
 
     def post(self, request):
         try:
