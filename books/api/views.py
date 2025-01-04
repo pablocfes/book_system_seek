@@ -100,7 +100,8 @@ class BookView(APIView):
 
 
 class AveragePriceView(APIView):
-    def get(self, request, year):
+    def get(self, request):
+        year = request.query_params.get('year')
         pipeline = [
             {"$match": {"published_date": {"$regex": f"^{year}"}}},
             {"$group": {"_id": None, "average_price": {"$avg": "$price"}}}
