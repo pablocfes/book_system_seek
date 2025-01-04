@@ -20,6 +20,7 @@ class BookView(APIView):
         for param in ['title', 'author', 'published_date', 'genre', 'price']:
             value = request.query_params.get(param)
             if value:
+                # Utilizamos regex para buscar en la cadena de texto sin importar mayúsculas
                 filters[param] = {"$regex": value, "$options": "i"}
 
         books = list(books_collection.find(filters, {"_id": False}))
