@@ -77,6 +77,10 @@ python manage.py runserver
 ```
 ## API de Usuarios
 
+## Importa la colección de postman
+
+El archivo `SEEK _BOOK_APP.postman_collection.json` contiene los datos de ejemplo para la colección de usuarios. Puedes importarlo en Postman o usar la API de usuarios de tu aplicación Django.
+
 ###  Crea un usuario en la API usando curl o Postman
 
 La API estará disponible en `http://localhost:8000/api/users/register/`.

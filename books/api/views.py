@@ -4,16 +4,44 @@ from rest_framework import status
 from books.models import books_collection
 from books.api.serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticated
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 class BookView(APIView):
-
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Obtiene una lista de libros filtrados por los parámetros de consulta.",
+        manual_parameters=[
+            openapi.Parameter('title', openapi.IN_QUERY, description="Filtra por título del libro", type=openapi.TYPE_STRING),
+            openapi.Parameter('author', openapi.IN_QUERY, description="Filtra por autor del libro", type=openapi.TYPE_STRING),
+            openapi.Parameter('published_date', openapi.IN_QUERY, description="Filtra por fecha de publicación", type=openapi.TYPE_STRING),
+            openapi.Parameter('genre', openapi.IN_QUERY, description="Filtra por género del libro", type=openapi.TYPE_STRING),
+            openapi.Parameter('price', openapi.IN_QUERY, description="Filtra por precio del libro", type=openapi.TYPE_NUMBER),
+            openapi.Parameter('page', openapi.IN_QUERY, description="Número de página para la paginación", type=openapi.TYPE_INTEGER),
+            openapi.Parameter('page_size', openapi.IN_QUERY, description="Número de resultados por página", type=openapi.TYPE_INTEGER),
+        ],
+        responses={
+            200: openapi.Response(
+                description="Lista de libros filtrados y paginados",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'total_books': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'page': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'page_size': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'total_pages': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'books': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_OBJECT)),
+                    }
+                )
+            ),
+            404: "No se encontraron libros con los filtros proporcionados",
+        }
+    )
     def get(self, request):
         try:
             # Filtrar libros por los query_params
@@ -49,6 +77,15 @@ class BookView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @swagger_auto_schema(
+        operation_description="Crea un nuevo libro en la base de datos.",
+        request_body=BookSerializer,
+        responses={
+            201: "Libro creado exitosamente",
+            400: "Errores de validación de los datos enviados",
+            200: "El libro ya existe en la base de datos",
+        }
+    )
     def post(self, request):
         try:
             serializer = BookSerializer(data=request.data)
@@ -72,6 +109,15 @@ class BookView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @swagger_auto_schema(
+        operation_description="Actualiza la información de un libro utilizando el título como referencia.",
+        request_body=BookSerializer,
+        responses={
+            200: "Libro actualizado exitosamente",
+            400: "El título es obligatorio para la actualización",
+            404: "No se encontró el libro a actualizar",
+        }
+    )
     def patch(self, request):
         try:
             title = request.data.get('title')
@@ -89,6 +135,17 @@ class BookView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @swagger_auto_schema(
+        operation_description="Elimina un libro utilizando el título como referencia.",
+        request_body=openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+            'title': openapi.Schema(type=openapi.TYPE_STRING, description="Título del libro a eliminar")
+        }),
+        responses={
+            200: "Libro eliminado exitosamente",
+            400: "El título es obligatorio para eliminar el libro",
+            404: "No se encontró el libro a eliminar",
+        }
+    )
     def delete(self, request):
         try:
             title = request.data.get('title')
@@ -101,7 +158,6 @@ class BookView(APIView):
             return Response({"message": "Book deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class AveragePriceView(APIView):
     def get(self, request):
