@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,7 +46,7 @@ INSTALLED_APPS = [
 
 
 # MongoDB Config
-MONGO_URI = "mongodb://db:27017/"
+MONGO_URI = os.getenv('MONGO_URI', "mongodb://localhost:27017/")
 MONGO_DB = "books_db"
 
 

@@ -17,9 +17,14 @@ initial_data = [
     {"title": "Adin", "author": "Umberto Eco", "published_date": "2019-07-15", "genre": "Novela", "price": 25.99},
 ]
 
-books_collection.insert_many(initial_data)
+def insert_initial_data():
+    for book in initial_data:
+        existing_book = books_collection.find_one({"title": book["title"]})
+        if not existing_book:
+            print(f"Se inserta el libro {book['title']}")
+            books_collection.insert_one(book)
+        else:
+            print(f"El libro {book['title']} ya existe en la base de datos")
 
-for book in initial_data:
-    existing_book = books_collection.find_one({"title": book["title"]})
-    if not existing_book:
-        books_collection.insert_one(book)
+if __name__ == "__main__":
+    insert_initial_data()
