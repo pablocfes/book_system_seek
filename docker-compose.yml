@@ -1,3 +1,4 @@
+
 services:
   web:
     build: .
@@ -11,6 +12,8 @@ services:
       - MONGO_DB=books_db
     depends_on:
       - db
+    expose:
+      - 8000
 
   db:
     image: mongo:5.0
@@ -19,6 +22,16 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - web
 
 volumes:
   mongo_data:
