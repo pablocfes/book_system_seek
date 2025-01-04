@@ -2,5 +2,6 @@ venv
 __pycache__/
 **/__pycache__/
 users/migrations/__pycache__/
+books/migrations/__pycache__/
 *.pyc
 *.sqlite3

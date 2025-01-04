@@ -9,53 +9,113 @@ Este es un proyecto de backend desarrollado en Django REST Framework (DRF) que u
 - Django REST Framework
 - MongoDB
 - Pymongo
-- Docker
-- Docker Compose
+- Docker (OPCIONAL)
+- Docker Compose (OPCIONAL)
 
 ## Configuración del Proyecto
 
-### 1. Clona el repositorio
+### Clona el repositorio
 
 ```bash
 https://github.com/tu_usuario/books-api.git
 cd books-api
 ```
+## CONFIGURACIÓN CON DOCKER
 
-### 2. Configura URL Mongo
-
-</>
-
-### 3. Inicializa la base de datos con datos de prueba
-
-Ejecuta el script de seed para añadir datos iniciales:
+### 1. Ejecuta Docker Compose para construir y arrancar el contenedor
+```bash
+docker compose up --build -d
+```
+ 
+### 2. Ejecuta el script de seed para añadir datos iniciales:
 
 ```bash
-docker-compose run web python books/migrations/seed_data.py
+docker exec web python run_seed_data.py
 ```
 
-### 4. Levanta los servicios
+### 3. Verifica que este corriendo los contenedores
 
 ```bash
-docker-compose up
+docker ps
 ```
 
-### 5. Accede a la aplicación
+## CONFIGURACIÓN CON PYTHON
 
-La API estará disponible en `http://localhost:8000/api/`.
+### * Debe tener instalado Python 3.11 y mongoDB
+
+### 1. Crea un entorno virtual
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 2. Instala las dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Ejecuta el script de seed para añadir datos iniciales:
+
+```bash
+python run_seed_data.py
+```
+
+### 4. Crea las migraciones
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5. Inicia el servidor
+
+```bash
+python manage.py runserver
+```
+## API de Usuarios
+
+###  Crea un usuario en la API usando curl o Postman
+
+La API estará disponible en `http://localhost:8000/api/users/register/`.
+
+```bash
+curl --location --request POST 'http://localhost:8000/api/users/register/' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "testuser",
+    "password": "testpassword",
+    "nombres": "John",
+    "apellidos": "Doe",
+    "email": "0aOY5@example.com"
+}'
+``` 
+
+### Agrega el token al header de la solicitud para usar la API de CRUD de libros
+
+```bash
+curl --location --request GET 'http://localhost:8000/api/books/' \
+--header 'Authorization: Token <tu-token>'
+
+En Postman, puedes agregar el token en la sección de encabezados de la solicitud.
+Authorization: Token <tu-token>
+```
+
 
 ## Endpoints Disponibles
 
 ### CRUD de Libros
 
 - **GET** `/api/books/` - Lista todos los libros
+- **GET** `/api/books/?<param>=<value>` - Obtiene un libro por query_params, son: title, author, published_date, genre, price
 - **POST** `/api/books/` - Crea un nuevo libro
-- **GET** `/api/books/<id>/` - Obtiene un libro por su ID
-- **PUT** `/api/books/<id>/` - Actualiza un libro existente
-- **DELETE** `/api/books/<id>/` - Elimina un libro por su ID
+- **PUT** `/api/books/` - Actualiza un libro existente
+- **DELETE** `/api/books/` - Elimina un libro por su ID
 
 ### Agregación: Precio Promedio por Año
 
-- **GET** `/api/books/average-price/<year>/` - Obtiene el precio promedio de los libros publicados en el año especificado
+- **GET** `/api/books/average-price/?year=<year>` - Obtiene el precio promedio de los libros publicados en el año especificado
 
 ## Ejemplo de Datos de Prueba
 
@@ -90,7 +150,3 @@ La API estará disponible en `http://localhost:8000/api/`.
 ## Contribuciones
 
 Si deseas contribuir a este proyecto, por favor realiza un fork del repositorio, crea una rama con tus cambios y envía un pull request.
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Puedes ver el archivo [LICENSE](LICENSE) para más detalles.
