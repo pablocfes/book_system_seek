@@ -27,7 +27,7 @@ class BookView(APIView):
         if not books:
             return Response({"message": "No books found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Paginación
+        # Paginación, tomamos los valores de page y page_size de los query_params o usamos valores por defecto
         page = int(request.query_params.get('page', 1))
         page_size = int(request.query_params.get('page_size', 10))
 
