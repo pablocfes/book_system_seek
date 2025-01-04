@@ -75,37 +75,7 @@ python manage.py migrate
 ```bash
 python manage.py runserver
 ```
-## API de Usuarios
 
-## Importa la colección de postman
-
-El archivo `SEEK _BOOK_APP.postman_collection.json` contiene los datos de ejemplo para la colección de usuarios. Puedes importarlo en Postman o usar la API de usuarios de tu aplicación Django.
-
-###  Crea un usuario en la API usando curl o Postman
-
-La API estará disponible en `http://localhost:8000/api/users/register/`.
-
-```bash
-curl --location --request POST 'http://localhost:8000/api/users/register/' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "username": "testuser",
-    "password": "testpassword",
-    "nombres": "John",
-    "apellidos": "Doe",
-    "email": "0aOY5@example.com"
-}'
-``` 
-
-### Agrega el token al header de la solicitud para usar la API de CRUD de libros
-
-```bash
-curl --location --request GET 'http://localhost:8000/api/books/' \
---header 'Authorization: Token <tu-token>'
-
-En Postman, puedes agregar el token en la sección de encabezados de la solicitud.
-Authorization: Token <tu-token>
-```
 ## UNIT TEST
 
 ### Ejecuta el script de unit test
@@ -134,6 +104,42 @@ Para visualizar la API en Swagger, visita `http://localhost:8000/`.
 ### Agregación: Precio Promedio por Año
 
 - **GET** `/api/books/average-price/?year=<year>` - Obtiene el precio promedio de los libros publicados en el año especificado
+
+
+## Importa la colección de postman
+
+El archivo `SEEK _BOOK_APP.postman_collection.json` contiene los datos de ejemplo para la colección de usuarios y books. Puedes importarlo en Postman o usar la API de usuarios de tu aplicación Django.
+
+
+## API de Usuarios
+
+###  Crea un usuario en la API usando curl o Postman
+
+La API estará disponible en `http://localhost:8000/api/users/register/`.
+
+```bash
+curl --location --request POST 'http://localhost:8000/api/users/register/' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "testuser",
+    "password": "testpassword",
+    "nombres": "John",
+    "apellidos": "Doe",
+    "email": "0aOY5@example.com"
+}'
+``` 
+
+### Agrega el token al header de la solicitud para usar la API de CRUD de libros
+
+```bash
+curl --location --request GET 'http://localhost:8000/api/books/' \
+--header 'Authorization: Token <tu-token>'
+
+En Postman, puedes agregar el token en la sección de encabezados de la solicitud.
+Authorization: Token <tu-token>
+```
+
+
 
 ## Ejemplo de Datos de Prueba
 
