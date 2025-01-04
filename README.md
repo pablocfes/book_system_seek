@@ -108,7 +108,7 @@ Para visualizar la API en Swagger, visita `http://localhost:8000/`.
 
 ## Importa la colección de postman
 
-El archivo `SEEK _BOOK_APP.postman_collection.json` contiene los datos de ejemplo para la colección de usuarios y books. Puedes importarlo en Postman o usar la API de usuarios de tu aplicación Django.
+El archivo `SEEK_BOOK_APP.postman_collection.json` contiene los datos de ejemplo para la colección de usuarios y books. Puedes importarlo en Postman o usar la API de usuarios de tu aplicación Django.
 
 
 ## API de Usuarios
