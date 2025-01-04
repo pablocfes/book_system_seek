@@ -8,52 +8,73 @@ from bson.objectid import ObjectId
 class BookView(APIView):
 
     def get(self, request):
-        # Filtrar por query_params
+
+        # Filtrar libros por los query_params
         filters = {}
         for param in ['title', 'author', 'published_date', 'price']:
             value = request.query_params.get(param)
             if value:
+                # Ignorar mayúsculas y minúsculas y realizar una busqueda de coincidencias
                 filters[param] = {"$regex": value, "$options": "i"}
 
-        # Buscar libros según los filtros
-        books = list(books_collection.find(filters, {"_id": 0}))
+        books = list(books_collection.find(filters, {"_id": False}))
         if not books:
             return Response({"message": "No books found"}, status=status.HTTP_404_NOT_FOUND)
         return Response(books, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = BookSerializer(data=request.data)
-        if serializer.is_valid():
-            books_collection.insert_one(serializer.validated_data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = BookSerializer(data=request.data)
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
 
-    def put(self, request):
-        title = request.data.get('title')
-        if not title:
-            return Response({"error": "Title is required for updating a book"}, status=status.HTTP_400_BAD_REQUEST)
+                # Buscar si ya existe un registro con el mismo título para evitar duplicados
+                existing_book = books_collection.find_one({"title": validated_data["title"]})
 
-        book_data = request.data
-        result = books_collection.update_one(
-            {"title": title},
-            {"$set": book_data}
-        )
-        if result.matched_count == 0:
-            return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({"message": "Book updated successfully"}, status=status.HTTP_200_OK)
+                if existing_book:
+                    # Convertir ObjectId a string para poder ser serializado
+                    existing_book["_id"] = str(existing_book["_id"])
+                    return Response(existing_book, status=status.HTTP_200_OK)
+
+                # Si no existe, crear uno nuevo
+                inserted_id = books_collection.insert_one(validated_data).inserted_id
+                validated_data["_id"] = str(inserted_id)  # Agregar el ID al resultado
+
+                return Response(validated_data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def patch(self, request):
+        try:
+            title = request.data.get('title')
+            if not title:
+                return Response({"error": "Title is required for updating a book"}, status=status.HTTP_400_BAD_REQUEST)
+
+            book_data = request.data
+            result = books_collection.update_one(
+                {"title": title},
+                {"$set": book_data}
+            )
+            if result.matched_count == 0:
+                return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Book updated successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request):
-        title = request.data.get('title')
-        if not title:
-            return Response({"error": "Title is required for deleting a book"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            title = request.data.get('title')
+            if not title:
+                return Response({"error": "Title is required for deleting a book"}, status=status.HTTP_400_BAD_REQUEST)
 
-        result = books_collection.delete_one({"title": title})
-        if result.deleted_count == 0:
-            return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({"message": "Book deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+            result = books_collection.delete_one({"title": title})
+            if result.deleted_count == 0:
+                return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Book deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    
 
 class AveragePriceView(APIView):
     def get(self, request, year):

@@ -2,11 +2,19 @@
 from books.models import books_collection
 
 initial_data = [
-    {"title": "Book One", "author": "Author A", "published_date": "2021-06-01", "genre": "Fiction", "price": 15.99},
-    {"title": "Book Two", "author": "Author B", "published_date": "2020-07-15", "genre": "Non-Fiction", "price": 20.00},
-    {"title": "Book Three", "author": "Author C", "published_date": "2021-05-10", "genre": "Science Fiction", "price": 18.50},
-    {"title": "Book Four", "author": "Author D", "published_date": "2022-01-20", "genre": "Fantasy", "price": 25.00},
-    {"title": "Book Five", "author": "Author E", "published_date": "2023-03-05", "genre": "Mystery", "price": 12.75},
+    {"title": "Cien años de soledad", "author": "Gabriel García Márquez", "published_date": "1967-05-30", "genre": "Novela", "price": 15.99},
+    {"title": "1984", "author": "George Orwell", "published_date": "1949-06-08", "genre": "Novela", "price": 12.99},
+    {"title": "El nombre de la rosa", "author": "Umberto Eco", "published_date": "1984-07-15", "genre": "Novela", "price": 9.99},
+    {"title": "El senor de los anillos", "author": "JRR Tolkien", "published_date": "1954-07-29", "genre": "Novela", "price": 19.99},
+    {"title": "El diario de Ana Frank", "author": "Ana Frank", "published_date": "1947-08-15", "genre": "Novela", "price": 11.99},
+    {"title": "Inside Out", "author": "Pete Docter", "published_date": "2019-06-06", "genre": "Animación", "price": 14.99},
+    {"title": "Toy Story", "author": "John Lasseter", "published_date": "1995-11-22", "genre": "Animación", "price": 12.99},
+    {"title": "The Lion King", "author": "Roger Allers", "published_date": "1994-07-29", "genre": "Animación", "price": 10.99},
+    {"title": "Frozen", "author": "Chris Buck", "published_date": "2013-11-27", "genre": "Animación", "price": 14.99},
+    {"title": "Moana", "author": "Ron Clements", "published_date": "2016-11-23", "genre": "Animación", "price": 12.99},
+    {"title": "The Hobbit", "author": "JRR Tolkien", "published_date": "1937-09-21", "genre": "Novela", "price": 14.99},
+    {"title": "El ultimo beso", "author": "Javier Bonnet", "published_date": "2013-07-15", "genre": "Novela", "price": 19.99},
+    {"title": "Adin", "author": "Umberto Eco", "published_date": "2019-07-15", "genre": "Novela", "price": 25.99},
 ]
 
 books_collection.insert_many(initial_data)
