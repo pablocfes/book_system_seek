@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 ]
 
 
-# MongoDB Config
+# MongoDB Config para saber si es en docker o local
 MONGO_URI = os.getenv('MONGO_URI', "mongodb://localhost:27017/")
 MONGO_DB = "books_db"
 
