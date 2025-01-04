@@ -27,17 +27,18 @@ cd books-api
 docker compose up --build -d
 ```
  
-### 2. Ejecuta el script de seed para añadir datos iniciales:
+### 2. Verifica que este corriendo los contenedores
+
+```bash
+docker ps
+```
+
+### 3. Ejecuta el script de seed para añadir datos iniciales:
 
 ```bash
 docker exec web python run_seed_data.py
 ```
 
-### 3. Verifica que este corriendo los contenedores
-
-```bash
-docker ps
-```
 
 ## CONFIGURACIÓN CON PYTHON
 
