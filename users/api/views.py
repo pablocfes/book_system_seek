@@ -18,10 +18,13 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request: Request, *args, **kwargs):
-        name = request.data['nombres']
-        last_name = request.data['apellidos']
-        password = request.data['password']
-        email = request.data['email']
+        name = request.data.get('nombres')
+        last_name = request.data.get('apellidos')
+        password = request.data.get('password')
+        email = request.data.get('email')
+        
+        if not all([name, last_name, password, email]):
+            return Response({'error': 'Por favor, asegurate de completar todos los campos [nombres, apellidos, password, email]'}, status=status.HTTP_400_BAD_REQUEST)
 
         if models.User.objects.filter(email=email).exists():
             return Response({'error': 'Ya existe un usuario con este email'}, status=status.HTTP_400_BAD_REQUEST)
@@ -40,8 +43,8 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request: Request, *args, **kwargs):
-        email = request.data['email']
-        password = request.data['password']
+        email = request.data.get('email')
+        password = request.data.get('password')
         user = models.User.objects.filter(email=email).first()
         if user and user.check_password(password):
             token, _ = Token.objects.get_or_create(user=user)
